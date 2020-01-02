@@ -23,20 +23,24 @@ def get_synonyms_smallword(concept, degree=1, min_backward=-1, min_forward=-1, m
 
     # request the result
     link = base_url + concept
-    sym_list = eval(requests.get(url=link).text)
+
+    try:
+        sym_list = eval(requests.get(url=link).text)
+    except:
+        return []
 
     if len(sym_list):
         # association_types: 'forward', 'backward', 'synonyms'
 
         if min_forward == -1 or len(sym_list['forward']) <= 5 :
-            syms += sym_list['forward']
+            syms += [item['word'] for item in sym_list['forward']]
         else:
             for words in sym_list['forward']:
                 if words['freq'] > min_forward:
                     syms.append(words['word'])
 
         if min_backward == -1 or len(sym_list['backward']) <= 5:
-            syms += sym_list['backward']
+            syms += [item['word'] for item in sym_list['backward']]
         else:
             for words in sym_list['backward']:
                 if words['freq'] > min_backward:

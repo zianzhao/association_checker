@@ -23,7 +23,11 @@ def get_synonyms_conceptnet(concept, degree=1):
 
         # link = 'http://api.conceptnet.io/query?start=/c/en/%s&end=/c/en&rel=/r/%s&limit=%d' % (concept, relation, limits)
         link = 'http://api.conceptnet.io/query?start=/c/en/%s&end=/c/en&rel=/r/%s' % (concept, relation)
-        obj = requests.get(link).json()
+
+        try:
+            obj = requests.get(link).json()
+        except:
+            continue
 
         edges = obj['edges']
         if not len(edges):
