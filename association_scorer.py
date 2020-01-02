@@ -3,17 +3,15 @@ from association_generator.smallword import get_synonyms_smallword
 
 
 def load_association(file_name):
-    with open('./test_file'+file_name, 'r') as infile:
+    with open('./test_file/'+file_name, 'r') as infile:
         associations = infile.readlines()[1:]
 
     test_association = {}
     for line in associations:
-        line = line.split(',')
-        if len(line[2]):
-            test_association[line[1]] = line[2]
-        if len(line[5]):
-            test_association[line[4]] = line[5]
-
+        line = line.split('\t')
+        if len(line) > 1:
+            if len(line[0]) and line[1]:
+                test_association[line[0].strip()] = line[1].strip()
     return test_association
 
 
@@ -78,4 +76,4 @@ def association_tester(infile, methods, degree=1, outfile=None):
     return
 
 
-association_tester()
+association_tester('1.tsv', ['cn', 'swow'])
