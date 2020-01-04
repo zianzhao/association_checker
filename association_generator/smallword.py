@@ -3,7 +3,7 @@ import requests
 base_url = 'https://smallworldofwords.org/search/en/dictionary/all/'
 
 
-def get_synonyms_smallword(concept, degree=1, min_backward=-1, min_forward=-1, min_freq=-1):
+def get_synonyms(concept, degree=1, min_backward=-1, min_forward=-1, min_freq=-1):
     """
 
     :param concept: String
@@ -57,4 +57,24 @@ def get_synonyms_smallword(concept, degree=1, min_backward=-1, min_forward=-1, m
         else:
             for item in related:
                 syms.append(related[item]['word'])
-    return list(set(syms))
+
+    syms_all = syms
+    if degree > 1:
+        syms = list(set(syms))
+        for item in syms:
+            syms_all += get_synonyms(item, degree-1, min_backward, min_forward, min_freq)
+    return list(set(syms_all))
+
+
+def get_synonyms_smallword(concept, degree=1, min_backward=-1, min_forward=-1, min_freq=-1):
+    """
+
+    :param concept: String
+    :param degree: Int degree for association exploration
+    :param min_backward: Int
+    :param min_forward: Int
+    :param min_freq: Float minimum frequency to be considered as
+    :return syms: List of String
+
+    """
+    return get_synonyms(concept, degree, min_backward, min_forward, min_freq)
