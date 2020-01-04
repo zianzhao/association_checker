@@ -7,22 +7,23 @@ relations = ['MannerOf', 'UsedFor', 'IsA', 'Causes', 'HasContext', 'FormOf',
              'HasSubevent', 'HasFirstSubevent', 'Synonym']
 
 
-def get_synonyms_conceptnet(concept, degree=1):
+def get_synonyms(concept, limits=None, degree=1):
     '''
-    Get synonym candidates via ConceptNet
     :param concept: String
+    :param limits: Int maximum number of related word returned
     :param degree: Int degree for related concept exploration
     :return syms: List of String
     '''
+
     final_syms = []
 
     syms = set()
 
     for relation in relations:
-        # limits = min(max(3, 30 - len(syms)), 15)
-
-        # link = 'http://api.conceptnet.io/query?start=/c/en/%s&end=/c/en&rel=/r/%s&limit=%d' % (concept, relation, limits)
         link = 'http://api.conceptnet.io/query?start=/c/en/%s&end=/c/en&rel=/r/%s' % (concept, relation)
+
+        if limits:
+            link += '&limit=%d' % limits
 
         try:
             obj = requests.get(link).json()
@@ -44,7 +45,20 @@ def get_synonyms_conceptnet(concept, degree=1):
                     syms.add(item['end']['label'].lower())
 
         final_syms += syms
-        # print(relation, list(syms))
 
-    # print(len(syms))
-    return list(syms)
+    all_syms = list(syms)
+    if degree > 1:
+        for item in list(syms):
+            all_syms += get_synonyms(item, limits, degree)
+    return list(set(all_syms))
+
+
+def get_synonyms_conceptnet(concept, limits=None, degree=1):
+    '''
+    :param concept: String
+    :param limits: Int maximum number of related word returned
+    :param degree: Int degree for related concept exploration
+    :return syms: List of String
+    '''
+
+    return get_synonyms(concept, limits, degree)
