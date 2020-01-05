@@ -1,7 +1,10 @@
 import argparse
+import logging
 
 from association_generator.conceptnet import get_synonyms_conceptnet
 from association_generator.smallword import get_synonyms_smallword
+
+METHOD = ['cn', 'swow']
 
 
 def load_association(file_name):
@@ -104,7 +107,7 @@ def association_tester(infile, methods, degree=1, args=None, outfile=None):
             # concept net
             stats['name'] = 'ConceptNet'
             for concept in associations:
-                if args and 'limits' in args:
+                if args and 'limits' in args and args['limits']:
                     cands = get_synonyms_conceptnet(concept=concept, degree=degree, limits=args['limits'])
                 else:
                     cands = get_synonyms_conceptnet(concept=concept, degree=degree)
@@ -116,5 +119,34 @@ def association_tester(infile, methods, degree=1, args=None, outfile=None):
     return
 
 
-arg_dict = {'limits': 1}
-association_tester('1.tsv', ['swow'], args=arg_dict, degree=2)
+if __name__ == '__main__':
+    PARSER = argparse.ArgumentParser(description='Association Scorer')
+    PARSER.add_argument('--infile', dest="infile")
+    PARSER.add_argument('--outfile', dest="outfile", default=None)
+    PARSER.add_argument('--methods', dest="methods", default='all')
+    PARSER.add_argument('--degree', dest="degree", default=1, type=int)
+
+    # concept net
+    PARSER.add_argument('--limits', dest="limits", type=int)
+
+    # swow
+    PARSER.add_argument('--min_freq', dest='min_freq', type=float)
+    PARSER.add_argument('--min_forward', dest='min_forward', type=int)
+    PARSER.add_argument('--min_backward', dest='min_backward', type=int)
+
+    args = PARSER.parse_args()
+    args = vars(args)
+
+    if args['infile']:
+        infile = args['infile']
+
+        methods = []
+        if args['methods'] == 'all':
+            methods = METHOD
+        elif args['methods'] in METHOD:
+            methods.append(args['methods'])
+
+        logging.info(methods)
+        degree = int(args['degree'])
+        outfile = args['outfile']
+        association_tester(infile, methods, degree=degree, args=args, outfile=outfile)
