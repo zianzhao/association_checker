@@ -75,16 +75,16 @@ def get_synonyms_smallword(concept, degree=1, args=None):
     :return syms: List of String
 
     """
-    if args and 'min_freq' in args:
-        min_freq = args['min_freq']
+    if args and 'min_freq' in args and args['min_freq']:
+        min_freq = float(args['min_freq'])
     else:
         min_freq = -1
-    if args and 'min_backward' in args:
-        min_backward = args['min_backward']
+    if args and 'min_backward' in args and args['min_backward']:
+        min_backward = int(args['min_backward'])
     else:
         min_backward = -1
-    if args and 'min_forward' in args:
-        min_forward = args['min_forward']
+    if args and 'min_forward' in args and args['min_forward']:
+        min_forward = int(args['min_forward'])
     else:
         min_forward = -1
 
