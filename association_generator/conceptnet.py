@@ -49,7 +49,7 @@ def get_synonyms(concept, limits=None, degree=1):
     all_syms = list(syms)
     if degree > 1:
         for item in list(syms):
-            all_syms += get_synonyms(item, limits, degree)
+            all_syms += get_synonyms(item, limits, degree-1)
     return list(set(all_syms))
 
 
