@@ -32,7 +32,7 @@ def get_synonyms(concept, degree=1, min_backward=-1, min_forward=-1, min_freq=-1
     if len(sym_list):
         # association_types: 'forward', 'backward', 'synonyms'
 
-        if min_forward == -1 or len(sym_list['forward']) <= 5 :
+        if min_forward == -1 or len(sym_list['forward']) <= 5:
             syms += [item['word'] for item in sym_list['forward']]
         else:
             for words in sym_list['forward']:
@@ -66,15 +66,26 @@ def get_synonyms(concept, degree=1, min_backward=-1, min_forward=-1, min_freq=-1
     return list(set(syms_all))
 
 
-def get_synonyms_smallword(concept, degree=1, min_backward=-1, min_forward=-1, min_freq=-1):
+def get_synonyms_smallword(concept, degree=1, args=None):
     """
 
     :param concept: String
     :param degree: Int degree for association exploration
-    :param min_backward: Int
-    :param min_forward: Int
-    :param min_freq: Float minimum frequency to be considered as
+    :param args: Dictionary arguments for SWOW association
     :return syms: List of String
 
     """
+    if args and 'min_freq' in args:
+        min_freq = args['min_freq']
+    else:
+        min_freq = -1
+    if args and 'min_backward' in args:
+        min_backward = args['min_backward']
+    else:
+        min_backward = -1
+    if args and 'min_forward' in args:
+        min_forward = args['min_forward']
+    else:
+        min_forward = -1
+
     return get_synonyms(concept, degree, min_backward, min_forward, min_freq)
